@@ -24,7 +24,7 @@ sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 service ssh restart
 
 # set repo
-wget -O /etc/apt/sources.list "https://raw.githubusercontent.com/kholizsivoi/script/master/sources.list.debian7"
+wget -O /etc/apt/sources.list "https://raw.githubusercontent.com/ahsnet/script/master/sources.list.debian9"
 wget "http://www.dotdeb.org/dotdeb.gpg"
 cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
 sh -c 'echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list'
@@ -56,42 +56,60 @@ echo "neofetch" >> .bash_profile
 cd
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/kholizsivoi/script/master/nginx.conf"
+wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/ahsnet/script/master/nginx.conf"
 mkdir -p /home/vps/public_html
 echo "<pre>~sivoi~</pre>" > /home/vps/public_html/index.html
-wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/kholizsivoi/script/master/vps.conf"
+wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/ahsnet/script/master/vps.conf"
 service nginx restart
 
 # install openvpn
-wget -O /etc/openvpn/openvpn.tar "https://raw.githubusercontent.com/kholizsivoi/script/master/vpn.tar"
+wget -O /etc/openvpn/openvpn.tar "https://raw.githubusercontent.com/ahsnet/script/master/vpn.tar"
 cd /etc/openvpn/
 tar xf openvpn.tar
 rm -f /etc/openvpn/openvpn.tar
-wget -O /etc/openvpn/1194.conf "https://raw.githubusercontent.com/kholizsivoi/script/master/1194.conf"
+wget -O /etc/openvpn/1194.conf "https://raw.githubusercontent.com/ahsnet/script/master/1194.conf"
 service openvpn restart
 sysctl -w net.ipv4.ip_forward=1
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
 iptables -t nat -I POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
 iptables-save > /etc/iptables_set.conf
-wget -O /etc/network/if-up.d/iptables "https://raw.githubusercontent.com/kholizsivoi/script/master/iptables"
+wget -O /etc/network/if-up.d/iptables "https://raw.githubusercontent.com/ahsnet/script/master/iptables"
 chmod +x /etc/network/if-up.d/iptables
 service openvpn restart
 
 # konfigurasi openvpn
 cd /etc/openvpn/
-wget -O /etc/openvpn/client.ovpn "https://raw.githubusercontent.com/kholizsivoi/script/master/client-1194.conf"
+wget -O /etc/openvpn/client.ovpn "https://raw.githubusercontent.com/ahsnet/script/master/client-1194.conf"
 sed -i $MYIP2 /etc/openvpn/client.ovpn;
 cp client.ovpn /home/vps/public_html/
 
 # install badvpn
 cd
-wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/kholizsivoi/script/master/badvpn-udpgw"
+wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/ahsnet/script/master/badvpn-udpgw"
 if [ "$OS" == "x86_64" ]; then
-  wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/kholizsivoi/script/master/badvpn-udpgw64"
+  wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/ahsnet/script/master/badvpn-udpgw64"
 fi
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7000' /etc/rc.local
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7100' /etc/rc.local
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7200' /etc/rc.local
 sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300' /etc/rc.local
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7400' /etc/rc.local
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7500' /etc/rc.local
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7600' /etc/rc.local
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7700' /etc/rc.local
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7800' /etc/rc.local
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7900' /etc/rc.local
 chmod +x /usr/bin/badvpn-udpgw
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7000
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7100
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7200
 screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7400
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7500
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7600
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7700
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7800
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7900
 
 # setting port ssh
 cd
@@ -103,7 +121,7 @@ service ssh restart
 apt-get -y install dropbear
 sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
 sed -i 's/DROPBEAR_PORT=22/DROPBEAR_PORT=444/g' /etc/default/dropbear
-sed -i 's/DROPBEAR_EXTRA_ARGS=/DROPBEAR_EXTRA_ARGS="-p 444 -p 80"/g' /etc/default/dropbear
+sed -i 's/DROPBEAR_EXTRA_ARGS=/DROPBEAR_EXTRA_ARGS="-p 444 -p 110"/g' /etc/default/dropbear
 echo "/bin/false" >> /etc/shells
 echo "/usr/sbin/nologin" >> /etc/shells
 service ssh restart
@@ -111,7 +129,7 @@ service dropbear restart
 
 # install dropbear 2017
 cd
-wget https://raw.githubusercontent.com/kholizsivoi/script/master/dropbear-2017.75.tar.bz2
+wget https://raw.githubusercontent.com/ahsnet/script/master/dropbear-2017.75.tar.bz2
 apt-get install zlib1g-dev
 bzip2 -cd dropbear-2017.75.tar.bz2  | tar xvf -
 cd dropbear-2017.75
@@ -124,8 +142,8 @@ rm -f /root/dropbear-2017.75.tar.bz2
 
 # install stunnel4
 apt-get -y install stunnel4
-wget -O /etc/stunnel/stunnel.pem "https://raw.githubusercontent.com/kholizsivoi/stunnel4/master/stunnel.pem"
-wget -O /etc/stunnel/stunnel.conf "https://raw.githubusercontent.com/kholizsivoi/stunnel4/master/stunnel.conf"
+wget -O /etc/stunnel/stunnel.pem "https://raw.githubusercontent.com/ahsnet/aku/master/stunnel.pem"
+wget -O /etc/stunnel/stunnel.conf "https://raw.githubusercontent.com/ahsnet/stunnel4/master/stunnel.conf"
 sed -i $MYIP2 /etc/stunnel/stunnel.conf
 sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
 service stunnel4 restart
@@ -137,16 +155,16 @@ service fail2ban restart
 # install squid3
 cd
 apt-get -y install squid3
-wget -O /etc/squid3/squid.conf "https://raw.githubusercontent.com/kholizsivoi/script/master/squid3.conf"
+wget -O /etc/squid3/squid.conf "https://raw.githubusercontent.com/ahsnet/script/master/squid3.conf"
 sed -i $MYIP2 /etc/squid3/squid.conf;
 service squid3 restart
 
 # install webmin
 cd
-wget "http://prdownloads.sourceforge.net/webadmin/webmin_1.850_all.deb"
-dpkg --install webmin_1.850_all.deb;
+wget "http://prdownloads.sourceforge.net/webadmin/webmin_1.941_all.deb"
+dpkg --install webmin_1.941_all.deb;
 apt-get -y -f install;
-rm /root/webmin_1.850_all.deb
+rm /root/webmin_1.941_all.deb
 sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
 service webmin restart
 
@@ -168,7 +186,7 @@ iptables -A FORWARD -m string --algo bm --string "info_hash" -j DROP
 # install ddos deflate
 cd
 apt-get -y install dnsutils dsniff
-wget https://raw.githubusercontent.com/kholizsivoi/script/master/ddos-deflate-master.zip
+wget https://raw.githubusercontent.com/ahsnet/script/master/ddos-deflate-master.zip
 unzip ddos-deflate-master.zip
 cd ddos-deflate-master
 ./install.sh
@@ -176,7 +194,7 @@ rm -rf /root/ddos-deflate-master.zip
 
 # setting banner
 rm /etc/issue.net
-wget -O /etc/issue.net "https://raw.githubusercontent.com/kholizsivoi/script/master/issue.net"
+wget -O /etc/issue.net "https://raw.githubusercontent.com/ahsnet/script/master/issue.net"
 sed -i 's@#Banner@Banner@g' /etc/ssh/sshd_config
 sed -i 's@DROPBEAR_BANNER=""@DROPBEAR_BANNER="/etc/issue.net"@g' /etc/default/dropbear
 service ssh restart
@@ -184,30 +202,32 @@ service dropbear restart
 
 # download script
 cd /usr/bin
-wget -O menu "https://raw.githubusercontent.com/kholizsivoi/script/master/menu.sh"
-wget -O user-add "https://raw.githubusercontent.com/kholizsivoi/script/master/user-add.sh"
-wget -O trial "https://raw.githubusercontent.com/kholizsivoi/script/master/trial.sh"
-wget -O user-del "https://raw.githubusercontent.com/kholizsivoi/script/master/hapus.sh"
-wget -O user-login "https://raw.githubusercontent.com/kholizsivoi/script/master/user-login.sh"
-wget -O user-list "https://raw.githubusercontent.com/kholizsivoi/script/master/user-list.sh"
-wget -O expdel "https://raw.githubusercontent.com/kholizsivoi/script/master/delexp.sh"
-wget -O resvis "https://raw.githubusercontent.com/kholizsivoi/script/master/resvis.sh"
-wget -O speedtest "https://raw.githubusercontent.com/kholizsivoi/script/master/speedtest_cli.py"
-wget -O info "https://raw.githubusercontent.com/kholizsivoi/script/master/info.sh"
-wget -O about "https://raw.githubusercontent.com/kholizsivoi/script/master/about.sh"
+wget -O menu "https://raw.githubusercontent.com/ahsnet/script/master/menu.sh"
+wget -O usernew "https://raw.githubusercontent.com/ahsnet/script/master/user-add.sh"
+wget -O trial "https://raw.githubusercontent.com/ahsnet/script/master/trial.sh"
+wget -O hapus "https://raw.githubusercontent.com/ahsnet/script/master/hapus.sh"
+wget -O cek "https://raw.githubusercontent.com/ahsnet/script/master/user-login.sh"
+wget -O member "https://raw.githubusercontent.com/ahsnet/script/master/user-list.sh"
+wget -O exp "https://raw.githubusercontent.com/ahsnet/script/master/delexp.sh"
+wget -O resvis "https://raw.githubusercontent.com/ahsnet/script/master/resvis.sh"
+wget -O speedtest "https://raw.githubusercontent.com/ahsnet/script/master/speedtest_cli.py"
+wget -O info "https://raw.githubusercontent.com/ahsnet/script/master/info.sh"
+wget -O about "https://raw.githubusercontent.com/ahsnet/script/master/about.sh"
+wget https://raw.githubusercontent.com/ahsnet/debian/master/autokick.sh
+bash autokick.sh
 
 echo "0 0 * * * root /sbin/reboot" > /etc/cron.d/reboot
 
 chmod +x menu
-chmod +x user-add
+chmod +x usernew
 chmod +x trial
-chmod +x user-del
-chmod +x user-login
-chmod +x user-list
+chmod +x hapus
+chmod +x cek
+chmod +x member
 chmod +x resvis
 chmod +x speedtest
 chmod +x info
-chmod +x expdel
+chmod +x exp
 chmod +x about
 
 # finishing
@@ -227,7 +247,7 @@ echo "unset HISTFILE" >> /etc/profile
 clear
 
 # info
-echo "~sivoi~"
+echo "AHSNET"
 echo "Autoscript Include:" | tee log-install.txt
 echo "===========================================" | tee -a log-install.txt
 echo ""  | tee -a log-install.txt
@@ -244,12 +264,12 @@ echo ""  | tee -a log-install.txt
 echo "Script"  | tee -a log-install.txt
 echo "------"  | tee -a log-install.txt
 echo "menu         (Menampilkan daftar perintah yang tersedia)"  | tee -a log-install.txt
-echo "user-add     (Membuat Akaun SSH)"  | tee -a log-install.txt
+echo "usernew      (Membuat Akaun SSH)"  | tee -a log-install.txt
 echo "trial        (Membuat Akaun Trial)"  | tee -a log-install.txt
-echo "user-del     (Menghapus Akaun SSH)"  | tee -a log-install.txt
-echo "user-login   (Cek User Login)"  | tee -a log-install.txt
-echo "user-list    (Cek Member SSH)"  | tee -a log-install.txt
-echo "expdel       (Delete User expired)"  | tee -a log-install.txt
+echo "usernew      (Menghapus Akaun SSH)"  | tee -a log-install.txt
+echo "cek          (Cek User Login)"  | tee -a log-install.txt
+echo "member       (Cek Member SSH)"  | tee -a log-install.txt
+echo "exp          (Delete User expired)"  | tee -a log-install.txt
 echo "resvis       (Restart Service Dropbear, Webmin, Squid3, OpenVPN dan SSH)"  | tee -a log-install.txt
 echo "reboot       (Reboot VPS)"  | tee -a log-install.txt
 echo "speedtest    (Speedtest VPS)"  | tee -a log-install.txt
@@ -264,14 +284,8 @@ echo ""  | tee -a log-install.txt
 echo "Thanks To"  | tee -a log-install.txt
 echo "---------"  | tee -a log-install.txt
 echo "Allah"  | tee -a log-install.txt
-echo "Admin And All Member KPN Family"  | tee -a log-install.txt
-echo "Google"  | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "Goup"  | tee -a log-install.txt
-echo "----"  | tee -a log-install.txt
-echo "CPM/OOCPM"  | tee -a log-install.txt
-echo "KPN IMO"  | tee -a log-install.txt
-echo "K.A.G"  | tee -a log-install.txt
+echo "AHSNET"  | tee -a log-install.txt
+echo "KHUSUS UNTUK CREW"  | tee -a log-install.txt
 echo ""  | tee -a log-install.txt
 echo "VPS AUTO REBOOT SETIAP JAM 00.00 WIB"  | tee -a log-install.txt
 echo "Log Installation --> /root/log-install.txt"  | tee -a log-install.txt
